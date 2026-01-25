@@ -22,7 +22,7 @@ Standard OCR often fails in messy environments. LogiScan uses GPT-4o Vision with
 
 ### Atomic Data Integrity
 
-Built on Supabase (PostgreSQL), the system utilizes composite keys to manage package data. This ensures that every scan is an atomic operation—if a package is scanned twice, the database performs an upsert, preventing duplicate entries and maintaining a single source of truth even during high-concurrency usage.
+Built on Supabase (PostgreSQL), the system utilizes composite keys to manage package data. This ensures that every scan is an atomic operation. If a package is scanned twice, the database performs an upsert, preventing duplicate entries and maintaining a single source of truth even during high-concurrency usage.
 
 ### Built for the "Field"
 
