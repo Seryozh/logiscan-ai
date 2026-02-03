@@ -1,6 +1,6 @@
 {
-  "name": "package-audit-tool",
-  "version": "0.1.0",
+  "name": "logiscan-ai",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",

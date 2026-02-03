@@ -3,8 +3,19 @@
 import OpenAI from "openai";
 import { supabase } from "@/lib/supabase";
 
+// Initialize OpenAI client with API key from environment
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
+/**
+ * Analyzes a shelf photo using GPT-4o Vision to extract package identifiers
+ *
+ * This function processes an image of packages on a shelf, uses AI vision to
+ * read internal stickers, and returns the extracted unit and tracking data.
+ * Matching against the database happens client-side for instant feedback.
+ *
+ * @param formData - Form data containing the image file
+ * @returns Array of scanned items with unit and last_four fields
+ */
 export async function auditShelf(formData: FormData) {
   const file = formData.get("image") as File;
   if (!file) {
@@ -15,12 +26,22 @@ export async function auditShelf(formData: FormData) {
     };
   }
 
-  // Convert image to base64
+  // Validate API key is configured
+  if (!process.env.OPENAI_API_KEY) {
+    return {
+      success: false,
+      message: "OpenAI API key not configured. Please add OPENAI_API_KEY to your .env file.",
+      scannedItems: [],
+    };
+  }
+
+  // Convert image to base64 for Vision API
   const buffer = Buffer.from(await file.arrayBuffer());
   const base64Image = buffer.toString("base64");
   const dataUrl = `data:${file.type};base64,${base64Image}`;
 
   try {
+    // Call GPT-4o Vision API with structured extraction prompt
     const completion = await openai.chat.completions.create({
       model: "gpt-4o",
       messages: [
@@ -55,11 +76,12 @@ export async function auditShelf(formData: FormData) {
       max_tokens: 1000,
     });
 
-    // Parse AI Response - Return raw scanned items only
+    // Parse AI response and clean up markdown formatting
     let content = completion.choices[0].message.content || "[]";
     content = content.replace(/```json/g, "").replace(/```/g, "").trim();
     const scannedItems = JSON.parse(content);
 
+    // Return raw scanned items (client handles matching for instant feedback)
     return {
       success: true,
       scannedItems: scannedItems || [],
@@ -74,8 +96,17 @@ export async function auditShelf(formData: FormData) {
   }
 }
 
+/**
+ * Fetches all packages from the database
+ *
+ * Used on page load to populate the client-side inventory cache.
+ * This enables instant matching without server round-trips during scanning.
+ *
+ * @returns Array of all packages with unit, guest_name, and last_four fields
+ */
 export async function getAllPackages() {
   try {
+    // Fetch all packages ordered by unit for consistent display
     const { data, error } = await supabase
       .from("packages")
       .select("unit, guest_name, last_four")

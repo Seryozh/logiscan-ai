@@ -1,21 +1,20 @@
 {
-  "name": "LogiScan AI",
+  "name": "LogiScan AI - Intelligent Inventory Audit",
   "short_name": "LogiScan",
-  "description": "Intelligent Inventory Audit Platform",
+  "description": "AI-powered package management with GPT-4o Vision for logistics operations",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#ffffff",
+  "theme_color": "#8b5cf6",
+  "orientation": "portrait",
+  "scope": "/",
   "icons": [
     {
-      "src": "/_next/static/media/favicon-192x192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "/_next/static/media/favicon-512x512.png",
-      "sizes": "512x512",
-      "type": "image/png"
+      "src": "/favicon.ico",
+      "sizes": "any",
+      "type": "image/x-icon"
     }
-  ]
+  ],
+  "categories": ["productivity", "business", "utilities"],
+  "screenshots": []
 }
